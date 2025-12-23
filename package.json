@@ -1,0 +1,12 @@
+{
+  "name": "adityabackend",
+  "version": "1.0.0",
+  "description": "this is testing the backend ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "aditya",
+  "license": "ISC"
+}
