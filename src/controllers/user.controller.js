@@ -21,13 +21,28 @@ const registerUser = asynchander(async (req, res) => {
     throw new ApiError(409, "User already exists with this email or username");
   }
   const avatarlocalpath = req.files?.avatar?.[0]?.path;
-  const coverimagelocalpath = req.files?.coverImage?.[0]?.path;
+  // const coverimagelocalpath = req.files?.coverImage?.[0]?.path;
+  let coverimagelocalpath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverimagelocalpath = req.files.coverImage[0].path;
+  } else {
+    coverimagelocalpath = null;
+  }
 
   if (!avatarlocalpath) {
     throw new ApiError(400, "Avatar is required");
   }
   const avatar = await uoloadcloudnary(avatarlocalpath);
-  const coverImage = await uoloadcloudnary(coverimagelocalpath);
+  let coverImage;
+  if (coverimagelocalpath !== null) {
+    coverImage = await uoloadcloudnary(coverimagelocalpath);
+  } else {
+    coverImage = { url: "" };
+  }
   if (!avatar) {
     throw new ApiError(400, "Error while uploading avatar image");
   }
@@ -35,7 +50,7 @@ const registerUser = asynchander(async (req, res) => {
   const user = await User.create({
     fullname,
     avatar: avatar.url,
-    coverImage: coverImage?.url || "",
+    coverImage: coverImage.url,
     email,
     password,
     username: username.toLowerCase(),
