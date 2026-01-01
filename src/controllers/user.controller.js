@@ -3,7 +3,7 @@ import { ApiError } from "../utils/apierror.js";
 import User from "../models/user.model.js";
 import { uoloadcloudnary } from "../utils/cloudnary.js";
 import { Apiresponce } from "../utils/apiresponce.js";
-import jwt, { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import e from "express";
 
 const registerUser = asynchander(async (req, res) => {
@@ -173,17 +173,19 @@ const refreshaccesstoken = asynchander(async (req, res) => {
   if (!incomingrefreshtoken) {
     throw new ApiError(401, "Refresh Token is unauthorized");
   }
-
+  console.log(incomingrefreshtoken, "this is incoming refreshtoken");
   try {
     const decodedtoken = jwt.verify(
-      refreshtoken,
+      incomingrefreshtoken,
       process.env.REFRESH_TOKEN_SECRET
     );
 
     const user = await User.findById(decodedtoken._id);
+    console.log(user, "this is user from db");
     if (!user) {
       throw new ApiError(401, "Invalid Refresh Token");
     }
+    console.log(user.refreshToken, "this is user refreshtoken");
 
     if (user.refreshToken !== incomingrefreshtoken) {
       throw new ApiError(401, "Refresh Token mismatch or expired");
