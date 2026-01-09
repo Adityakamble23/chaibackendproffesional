@@ -17,6 +17,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.error("Token generation error:", error);
     throw new ApiError(
       500,
       "Something went wrong while generating referesh and access token"
@@ -244,6 +245,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
+
+  console.log("req.body:", req.body);
+
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "Old password and new password are required");
+  }
 
   const user = await User.findById(req.user?._id);
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
